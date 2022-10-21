@@ -1,8 +1,4 @@
-const Image = ({ images, imageIndex }) => {
-
-  const leadImage = images[imageIndex % images.length]
-  const tailImage = images[(imageIndex - 5) % images.length]
-
+const Image = () => {
   return (
     <div>Image</div>
   )
