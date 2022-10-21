@@ -1,0 +1,26 @@
+body {
+  background-color: ghostwhite;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.image {
+  width: 40vmin;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.image[data-status='inactive'] {
+  display: none;
+}
+
+.image[data-status='active'] {
+  display: block;
+}
