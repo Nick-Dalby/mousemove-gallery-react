@@ -44,8 +44,16 @@ const images = [
   },
 ]
 
+const clientID = `?client_id=${import.meta.env.VITE_ACCESS_KEY}`
+const mainUrl = `https://api.unsplash.com/photos/`
+const searchUrl = `https://api.unsplash.com/search/photos/`
+
 function App() {
   const [ref, mousePosition] = useMousePosition()
+
+  const [loading, setLoading] = useState(false)
+  const [photos, setPhotos] = useState([])
+  const [query, setQuery] = useState('')
 
   // ref for each image in images.map()
   const imgRef = useRef([])
@@ -54,7 +62,7 @@ function App() {
   let [imageIndex, setImageIndex] = useState(0)
 
   // last mouse position
-  let [lastPos, setLastPos] = useState({ x: 0, y: 0 })
+  let [lastPos, setLastPos] = useState({ x: 0, y: 0  })
 
   // calculate distance from last mouse position
   const distanceFromLast = (x, y) => {
@@ -63,39 +71,103 @@ function App() {
   }
 
   useEffect(() => {
-    if (distanceFromLast(mousePosition.left, mousePosition.top) > (window.innerWidth / 20)) {
+    if (
+      distanceFromLast(mousePosition.left, mousePosition.top) >
+      window.innerWidth / 20
+    ) {
       imageIndex++
       setImageIndex(imageIndex)
       setLastPos({ x: mousePosition.left, y: mousePosition.top })
-      imgRef.current[imageIndex % images.length].style.top = `${mousePosition.top}px`
-      imgRef.current[imageIndex % images.length].style.left = `${mousePosition.left}px`
+      imgRef.current[
+        imageIndex % images.length
+      ].style.top = `${mousePosition.top}px`
+      imgRef.current[
+        imageIndex % images.length
+      ].style.left = `${mousePosition.left}px`
       imgRef.current[imageIndex % images.length].style.zIndex = imageIndex
       imgRef.current[imageIndex % images.length].dataset.status = 'active'
       if (imgRef.current[(imageIndex - 5) % images.length]) {
-        imgRef.current[(imageIndex - 5) % images.length].dataset.status = 'inactive'
+        imgRef.current[(imageIndex - 5) % images.length].dataset.status =
+          'inactive'
       }
     }
   }, [mousePosition])
 
-  
+  const fetchImages = async () => {
+    setLoading(true)
+    let url
+    const urlQuery = `&query=${query}`
 
+    if (query) {
+      url = `${searchUrl}${clientID}${urlQuery}`
+    } else {
+      url = `${mainUrl}${clientID}`
+    }
+
+    try {
+      const response = await fetch(url)
+      const data = await response.json()
+      // setPhotos(data)
+
+      setPhotos(() => {
+        if (query) {
+          return data.results
+        } else {
+          return data
+        }
+      })
+
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchImages()
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault(e)
+    if (!query) return
+    fetchImages()
+    return
+  }
 
   return (
-    <div ref={ref} className="app">
-      {mousePosition.left} | {imageIndex} | {(imageIndex - 5) % images.length} | {window.innerWidth / 20}
-      {images.map((image, index) => {
-        return (
-          <img
-            ref={ref => (imgRef.current[index] = ref)}
-            src={image.url}
-            key={image.id}
-            index={index}
-            data-status='inactive'
-            className="image"
-          />
-        )
-      })}
-    </div>
+    <>
+      <div ref={ref} className="app">
+        <div>
+          {photos.map((photo, index) => {
+            return (
+              <img
+                ref={(ref) => (imgRef.current[index] = ref)}
+                src={photo.urls.regular}
+                key={photo.id}
+                data-status="inactive"
+                className="image"
+              />
+            )
+          })}
+        </div>
+      </div>
+      {loading && <h2 className="loading">Loading...</h2>}
+      <form className="search-form">
+        <input
+          type="text"
+          placeholder="search"
+          className="form-input"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value)
+          }}
+        />
+        <button type="submit" className="submit-btn" onClick={handleSubmit}>
+          search
+        </button>
+      </form>
+    </>
   )
 }
 
