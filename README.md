@@ -10,7 +10,7 @@ image gallery on mousemove in React
 
 **Tech used:** HTML, CSS, JavaScript, React
 
-Fetch images from Unsplash, scyle through the images on mousemove, leaving a trail...
+Fetch images from Unsplash, cycle through the images on mousemove, leaving a trail...
 
 Features:
 
