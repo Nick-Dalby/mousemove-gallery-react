@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useMousePosition from './hooks/useMousePosition'
 
 const images = [
@@ -62,7 +62,7 @@ function App() {
   let [imageIndex, setImageIndex] = useState(0)
 
   // last mouse position
-  let [lastPos, setLastPos] = useState({ x: 0, y: 0  })
+  let [lastPos, setLastPos] = useState({ x: 0, y: 0 })
 
   // calculate distance from last mouse position
   const distanceFromLast = (x, y) => {
@@ -78,19 +78,24 @@ function App() {
       imageIndex++
       setImageIndex(imageIndex)
       setLastPos({ x: mousePosition.left, y: mousePosition.top })
-      imgRef.current[
-        imageIndex % images.length
-      ].style.top = `${mousePosition.top}px`
-      imgRef.current[
-        imageIndex % images.length
-      ].style.left = `${mousePosition.left}px`
-      imgRef.current[imageIndex % images.length].style.zIndex = imageIndex
-      imgRef.current[imageIndex % images.length].dataset.status = 'active'
-      if (imgRef.current[(imageIndex - 5) % images.length]) {
-        imgRef.current[(imageIndex - 5) % images.length].dataset.status =
+      
+      if (imgRef.current[0]) {
+
+        imgRef.current[
+          imageIndex % images.length
+        ].style.top = `${mousePosition.top}px`
+        imgRef.current[
+          imageIndex % images.length
+        ].style.left = `${mousePosition.left}px`
+        imgRef.current[imageIndex % images.length].style.zIndex = imageIndex
+        imgRef.current[imageIndex % images.length].dataset.status = 'active'
+        if (imgRef.current[(imageIndex - 5) % images.length]) {
+          imgRef.current[(imageIndex - 5) % images.length].dataset.status =
           'inactive'
+        }
       }
     }
+
   }, [mousePosition])
 
   const fetchImages = async () => {
