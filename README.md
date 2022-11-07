@@ -14,7 +14,7 @@ Fetch images from Unsplash, cycle through the images on mousemove, leaving a tra
 
 Features:
 
-- mousmove custom hook
+- mousemove custom hook
 - fetch()
 - useRef()
 - Math.hypot() to calculate distance between points ✨
